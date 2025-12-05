@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import sys
-from collections import deque
 
 ranges = []
 for line in sys.stdin:
@@ -11,24 +10,19 @@ for line in sys.stdin:
 
 ranges.sort()
 
+q = ranges[1:]
+ranges = ranges[:1]
 
-i = len(ranges) - 1
+for hl, hh in q:
+    ll, lh = ranges[-1]
 
-while i > 0:
-    hl, hh = ranges[i]
-    ll, lh = ranges[i - 1]
     if hl > lh:
-        i -= 1
-        continue
-
-    l = min(hl, ll)
-    h = max(hh, lh)
-
-    ranges[i - 1: i + 1] = [[l, h]]
-    i -= 1
+        ranges.append((hl, hh))
+    else:
+        ranges.pop()
+        ranges.append((ll, max(lh, hh)))
 
 s = 0
-for l, h in ranges:
-    s += h - l + 1
-
+for low, high in ranges:
+    s += high - low + 1
 print(s)
