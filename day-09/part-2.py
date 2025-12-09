@@ -75,8 +75,8 @@ def build_set(a, b):
 
 
 m = 0
-for tile in tiles:
-    for other in tiles:
+for i, tile in enumerate(tiles):
+    for other in tiles[i + 1:]:
         a = area(tile, other)
         if a <= m:
             continue
