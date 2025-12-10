@@ -9,11 +9,19 @@ c_lookup = {}
 rs = sorted(list(set(t[0] for t in tls)))
 cs = sorted(list(set(t[1] for t in tls)))
 
+prev = -1
 for i, r in enumerate(rs):
+    if abs(r - prev) == 1:
+        raise Exception("BAD")
     r_lookup[r] = i * 2
+    prev = r
 
+prev = -1
 for i, c in enumerate(cs):
+    if abs(c - prev) == 1:
+        raise Exception("BAD")
     c_lookup[c] = i * 2
+    prev = c
 
 tiles = [(r_lookup[r], c_lookup[c]) for r, c in tls]
 
@@ -55,23 +63,23 @@ while q:
                 all_tiles.add(t)
                 q.append(t)
 
+
 def area(a, b):
     r1, c1 = tile_of(a)
     r2, c2 = tile_of(b)
     return (abs(r1 - r2) + 1) * (abs(c1 - c2) + 1)
 
 
-def build_set(a, b):
+def good(a, b):
     r1, c1 = a
     r2, c2 = b
-    s = set()
-    for r in range(min(r1, r2), max(r1, r2) + 1):
-        s.add((r, c1))
-        s.add((r, c2))
-    for c in range(min(c1, c2), max(c1, c2) + 1):
-        s.add((r1, c))
-        s.add((r2, c))
-    return s
+    for r in range(min(r1, r2) + 1, max(r1, r2), 2):
+        if (r, c1) not in all_tiles or (r, c2) not in all_tiles:
+            return False
+    for c in range(min(c1, c2) + 1, max(c1, c2), 2):
+        if (r1, c) not in all_tiles or (r2, c) not in all_tiles:
+            return False
+    return True
 
 
 m = 0
@@ -80,7 +88,6 @@ for i, tile in enumerate(tiles):
         a = area(tile, other)
         if a <= m:
             continue
-        s = build_set(tile, other)
-        if s.issubset(all_tiles):
+        if good(tile, other):
             m = a
 print(m)
